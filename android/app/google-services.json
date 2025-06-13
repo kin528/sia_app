@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520373090432",
+    "project_id": "smart-interactive-academy",
+    "storage_bucket": "smart-interactive-academy.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520373090432:android:5203d07ffeb63402a1ce65",
+        "android_client_info": {
+          "package_name": "com.example.sia_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYX-mi7hl2voSq0FzwOubGisZgDpOTLsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
