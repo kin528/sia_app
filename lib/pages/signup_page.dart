@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -27,10 +28,8 @@ class _SignupPageState extends State<SignupPage> {
   String? _errorMessage;
   bool _obscurePassword = true;
 
-  // --- Added for Sex Dropdown ---
   String? _selectedSex;
   final List<String> _sexOptions = ['Male', 'Female', 'Other'];
-  // -----------------------------
 
   @override
   void dispose() {
@@ -56,18 +55,34 @@ class _SignupPageState extends State<SignupPage> {
         _errorMessage = null;
       });
 
+      UserCredential? userCredential;
       try {
-        UserCredential userCredential =
+        userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        final user = userCredential.user;
+        if (user == null) throw Exception("User creation failed");
 
-        // Add sex value to displayName by appending after age, separated by another pipe
-        await userCredential.user?.updateProfile(
+        // Set displayName (optional)
+        await user.updateProfile(
           displayName:
-              '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}|${_ageController.text.trim()}|${_selectedSex ?? ""}',
+              '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
         );
+
+        // Save user details to Firestore
+        final userDoc =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+        await userDoc.set({
+          'firstName': _firstNameController.text.trim(),
+          'lastName': _lastNameController.text.trim(),
+          'age': _ageController.text.trim(),
+          'sex': _selectedSex ?? "",
+          'email': _emailController.text.trim(),
+          'createdAt': FieldValue.serverTimestamp(),
+        });
 
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -95,14 +110,27 @@ class _SignupPageState extends State<SignupPage> {
             errorMessage = 'The password is too weak.';
             break;
           default:
-            errorMessage = 'An unknown error occurred.';
+            errorMessage = 'An unknown error occurred (${e.code}).';
         }
-
         if (!mounted) return;
         setState(() {
           _errorMessage = errorMessage;
         });
+      } on FirebaseException catch (e) {
+        // If Firestore write fails, delete the FirebaseAuth user to avoid ghost accounts
+        if (userCredential?.user != null) {
+          await userCredential!.user!.delete();
+        }
+        if (!mounted) return;
+        setState(() {
+          _errorMessage =
+              'Account creation failed (database error): ${e.message}';
+        });
       } catch (e) {
+        // Also delete user if any other error after FirebaseAuth user creation
+        if (userCredential?.user != null) {
+          await userCredential!.user!.delete();
+        }
         if (!mounted) return;
         setState(() {
           _errorMessage = 'An unexpected error occurred. Please try again.';
@@ -252,7 +280,6 @@ class _SignupPageState extends State<SignupPage> {
                           },
                         ),
                         const SizedBox(height: 12),
-                        // --- Added Sex Dropdown Here ---
                         DropdownButtonFormField<String>(
                           decoration: const InputDecoration(
                             labelText: 'Sex',
@@ -275,7 +302,6 @@ class _SignupPageState extends State<SignupPage> {
                               value == null ? 'Please select sex' : null,
                         ),
                         const SizedBox(height: 12),
-                        // --- End Added Sex Dropdown ---
                         TextFormField(
                           controller: _emailController,
                           focusNode: _emailFocus,
