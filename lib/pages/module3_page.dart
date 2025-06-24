@@ -11,21 +11,21 @@ import 'dart:html' as html;
 
 const String adminUid = 'QVyiObd7HoXTyNQaoxBzRSW0HGK2';
 
-class Module1Page extends StatefulWidget {
-  const Module1Page({super.key});
+class Module3Page extends StatefulWidget {
+  const Module3Page({super.key});
 
   @override
-  State<Module1Page> createState() => _Module1PageState();
+  State<Module3Page> createState() => _Module3PageState();
 }
 
-class _Module1PageState extends State<Module1Page> {
+class _Module3PageState extends State<Module3Page> {
   bool _uploading = false;
   String? _uploadStatus;
   String? _docUrl;
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getUploadsStream() {
     return FirebaseFirestore.instance
-        .collection('module1_documents')
+        .collection('module3_documents')
         .orderBy('uploadedAt', descending: true)
         .snapshots();
   }
@@ -100,7 +100,7 @@ class _Module1PageState extends State<Module1Page> {
         // Save to Firestore
         final user = FirebaseAuth.instance.currentUser;
         final doc =
-            FirebaseFirestore.instance.collection('module1_documents').doc();
+            FirebaseFirestore.instance.collection('module3_documents').doc();
 
         await doc.set({
           'userId': user?.uid ?? 'anonymous',
@@ -131,7 +131,7 @@ class _Module1PageState extends State<Module1Page> {
   Future<void> _deleteUpload(String docId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('module1_documents')
+          .collection('module3_documents')
           .doc(docId)
           .delete();
       setState(() {
@@ -204,7 +204,7 @@ class _Module1PageState extends State<Module1Page> {
                           size: 64, color: Theme.of(context).primaryColor),
                       const SizedBox(height: 16),
                       Text(
-                        "Module 1 - Document Upload",
+                        "Module 3 - Document Upload",
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
@@ -292,7 +292,7 @@ class _Module1PageState extends State<Module1Page> {
                               return const Center(child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
+                              return Text('Error: \u001b[${snapshot.error}');
                             }
                             final docs = snapshot.data?.docs ?? [];
                             if (docs.isEmpty) {
@@ -372,4 +372,4 @@ class _Module1PageState extends State<Module1Page> {
       ),
     );
   }
-}
+} 

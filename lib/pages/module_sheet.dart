@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'module1_page.dart';
+import 'module2_page.dart';
+import 'module3_page.dart';
+import 'module4_page.dart';
+import 'module5_page.dart';
 
 class ModuleSheet extends StatelessWidget {
   final bool isDialog;
@@ -74,6 +78,26 @@ class ModuleSheet extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (context) => const Module1Page()),
+                      );
+                    } else if (i == 2) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const Module2Page()),
+                      );
+                    } else if (i == 3) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const Module3Page()),
+                      );
+                    } else if (i == 4) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const Module4Page()),
+                      );
+                    } else if (i == 5) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => const Module5Page()),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'playmodule1_page.dart';
+import 'playmodule2_page.dart';
+import 'playmodule3_page.dart';
+import 'playmodule4_page.dart';
+import 'playmodule5_page.dart';
+
+const String adminUid = 'QVyiObd7HoXTyNQaoxBzRSW0HGK2';
 
 class PlayPanel extends StatelessWidget {
   final VoidCallback? onBack;
@@ -7,6 +15,7 @@ class PlayPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isAdmin = FirebaseAuth.instance.currentUser?.uid == adminUid;
     return Center(
       key: const ValueKey("play"),
       child: ConstrainedBox(
@@ -52,26 +61,115 @@ class PlayPanel extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 20),
                   child: SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
-                      icon: Icon(Icons.sports_esports, color: Colors.white),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade400,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        textStyle: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w600),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('Play Module ${i + 1} tapped!')),
-                        );
-                      },
-                      label: Text('Play Module ${i + 1}'),
-                    ),
+                    child: i == 0
+                        ? ElevatedButton.icon(
+                            icon: Icon(Icons.sports_esports, color: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green.shade400,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 24),
+                              textStyle: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const PlayModule1Page()),
+                              );
+                            },
+                            label: const Text('Play Module 1'),
+                          )
+                        : i == 1
+                            ? ElevatedButton.icon(
+                                icon: Icon(Icons.sports_esports, color: Colors.white),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade400,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 24),
+                                  textStyle: const TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.w600),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const PlayModule2Page()),
+                                  );
+                                },
+                                label: const Text('Play Module 2'),
+                              )
+                            : i == 2
+                                ? ElevatedButton.icon(
+                                    icon: Icon(Icons.sports_esports, color: Colors.white),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green.shade400,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 24),
+                                      textStyle: const TextStyle(
+                                          fontSize: 20, fontWeight: FontWeight.w600),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => const PlayModule3Page()),
+                                      );
+                                    },
+                                    label: const Text('Play Module 3'),
+                                  )
+                                : i == 3
+                                    ? ElevatedButton.icon(
+                                        icon: Icon(Icons.sports_esports, color: Colors.white),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green.shade400,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(vertical: 24),
+                                          textStyle: const TextStyle(
+                                              fontSize: 20, fontWeight: FontWeight.w600),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const PlayModule4Page()),
+                                          );
+                                        },
+                                        label: const Text('Play Module 4'),
+                                      )
+                                    : ElevatedButton.icon(
+                                        icon: Icon(Icons.sports_esports, color: Colors.white),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green.shade400,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(vertical: 24),
+                                          textStyle: const TextStyle(
+                                              fontSize: 20, fontWeight: FontWeight.w600),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(16),
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => const PlayModule5Page()),
+                                          );
+                                        },
+                                        label: const Text('Play Module 5'),
+                                      ),
                   ),
                 ),
               ),

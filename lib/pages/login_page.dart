@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final bool showSplash;
+  const LoginPage({super.key, this.showSplash = true});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
-  // Splash state
-  bool _showSplash = true;
+  late bool _showSplash;
 
   // Login state
   final TextEditingController _emailController = TextEditingController();
@@ -24,14 +25,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    // Splash timer
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _showSplash = false;
-        });
-      }
-    });
+    _showSplash = widget.showSplash;
+    if (_showSplash) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _showSplash = false;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -314,8 +317,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       children: [
                         const Text("Don't have an account? "),
                         TextButton(
-                          onPressed: () => Navigator.pushReplacementNamed(
-                              context, '/signup'),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SignupPage()),
+                          ),
                           child: const Text(
                             'Sign up',
                             style: TextStyle(fontWeight: FontWeight.bold),

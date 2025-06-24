@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'login_page.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -374,8 +375,12 @@ class _SignupPageState extends State<SignupPage> {
                           children: [
                             const Text("Already have an account? "),
                             TextButton(
-                              onPressed: () => Navigator.pushReplacementNamed(
-                                  context, '/login'),
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage(
+                                        showSplash: false)),
+                              ),
                               child: const Text(
                                 'Log in',
                                 style: TextStyle(fontWeight: FontWeight.bold),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'login_page.dart';
 
 class UserProfilePanel extends StatefulWidget {
   final bool isDialog;
@@ -134,11 +135,10 @@ class _UserProfilePanelState extends State<UserProfilePanel> {
                 ),
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
-                  if (widget.isDialog) {
-                    Navigator.of(context).pop();
-                  } else {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  }
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    (route) => false,
+                  );
                 },
               ),
             ],
