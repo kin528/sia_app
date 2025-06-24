@@ -166,6 +166,9 @@ class _Module2PageState extends State<Module2Page> {
   Widget build(BuildContext context) {
     final uploadsStream = getUploadsStream();
     final isAdmin = FirebaseAuth.instance.currentUser?.uid == adminUid;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 600;
+    final maxWidth = isWide ? 500.0 : double.infinity;
 
     return Container(
       decoration: const BoxDecoration(
@@ -178,16 +181,16 @@ class _Module2PageState extends State<Module2Page> {
       child: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(isWide ? 32.0 : 12.0),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500),
+              constraints: BoxConstraints(maxWidth: maxWidth),
               child: Card(
                 elevation: 12,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(isWide ? 28 : 18),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(32.0),
+                  padding: EdgeInsets.all(isWide ? 32.0 : 16.0),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -201,20 +204,21 @@ class _Module2PageState extends State<Module2Page> {
                         ],
                       ),
                       Icon(Icons.cloud_upload_rounded,
-                          size: 64, color: Theme.of(context).primaryColor),
-                      const SizedBox(height: 16),
+                          size: isWide ? 64 : 44, color: Theme.of(context).primaryColor),
+                      SizedBox(height: isWide ? 20 : 12),
                       Text(
                         "Module 2 - Document Upload",
                         style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
+                              fontSize: isWide ? 28 : 20,
                             ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         "Upload your .doc or .docx file to Cloudinary and view all your uploads below.",
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: isWide ? 18 : 14),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
@@ -233,6 +237,7 @@ class _Module2PageState extends State<Module2Page> {
                                         ? Colors.red
                                         : Colors.green,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: isWide ? 18 : 14,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -249,9 +254,9 @@ class _Module2PageState extends State<Module2Page> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+                            padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(isWide ? 20 : 14),
                             ),
                             elevation: 6,
                           ),
@@ -262,7 +267,7 @@ class _Module2PageState extends State<Module2Page> {
                         SelectableText(
                           "Document URL:\n$_docUrl",
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 14, color: Colors.blueAccent),
+                          style: TextStyle(fontSize: isWide ? 16 : 12, color: Colors.blueAccent),
                         ),
                       ],
                       if (_uploading)
@@ -278,13 +283,13 @@ class _Module2PageState extends State<Module2Page> {
                           const SizedBox(width: 8),
                           Text(
                             "All Uploaded Documents",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: isWide ? 20 : 16),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
-                        height: 260,
+                        height: isWide ? 320 : 220,
                         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                           stream: uploadsStream,
                           builder: (context, snapshot) {
@@ -292,7 +297,7 @@ class _Module2PageState extends State<Module2Page> {
                               return const Center(child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
-                              return Text('Error: \u001b[${snapshot.error}');
+                              return Text('Error: \\${snapshot.error}');
                             }
                             final docs = snapshot.data?.docs ?? [];
                             if (docs.isEmpty) {
@@ -307,12 +312,12 @@ class _Module2PageState extends State<Module2Page> {
                                 return Card(
                                   elevation: 3,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(isWide ? 18 : 10),
                                   ),
                                   child: ListTile(
                                     leading: const Icon(Icons.description, color: Colors.blueAccent),
-                                    title: Text(data['fileName'] ?? 'Document', style: const TextStyle(fontWeight: FontWeight.w600)),
-                                    subtitle: Text(data['docUrl'] ?? '', maxLines: 1, overflow: TextOverflow.ellipsis),
+                                    title: Text(data['fileName'] ?? 'Document', style: TextStyle(fontWeight: FontWeight.w600, fontSize: isWide ? 18 : 14)),
+                                    subtitle: Text(data['docUrl'] ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: isWide ? 14 : 11)),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [

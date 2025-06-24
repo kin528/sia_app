@@ -26,11 +26,24 @@ class _UserProfilePanelState extends State<UserProfilePanel> {
     final user = FirebaseAuth.instance.currentUser;
     print('Current User: $user');
     if (user != null) {
+      final adminUid = 'QVyiObd7HoXTyNQaoxBzRSW0HGK2';
       try {
-        final doc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
+        DocumentSnapshot<Map<String, dynamic>> doc;
+        if (user.uid == adminUid) {
+          // Admin: no profile data needed
+          doc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+        } else {
+          // Student: load from /admin/students/users/{userId}
+          doc = await FirebaseFirestore.instance
+              .collection('admin')
+              .doc('students')
+              .collection('users')
+              .doc(user.uid)
+              .get();
+        }
         print('Looking for Firestore doc with ID: ${user.uid}');
         print('Doc exists: ${doc.exists}');
         print('Doc data: ${doc.data()}');
@@ -60,8 +73,32 @@ class _UserProfilePanelState extends State<UserProfilePanel> {
 
   @override
   Widget build(BuildContext context) {
+    final adminUid = 'QVyiObd7HoXTyNQaoxBzRSW0HGK2';
+    final user = FirebaseAuth.instance.currentUser;
+    final isAdmin = user != null && user.uid == adminUid;
     Widget content;
-    if (isLoading) {
+    if (isAdmin) {
+      content = Center(
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.logout),
+          label: const Text('Sign Out'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+            textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+              (route) => false,
+            );
+          },
+        ),
+      );
+    } else if (isLoading) {
       content = const Center(child: CircularProgressIndicator());
     } else if (userData == null) {
       content = Center(

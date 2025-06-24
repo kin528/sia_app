@@ -3,6 +3,7 @@ import 'module_sheet.dart';
 import 'play_panel.dart';
 import 'dashboard_panel.dart';
 import 'user_profile_panel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Add a reusable right/left border decoration for content area
 final BoxDecoration contentBorderDecoration = BoxDecoration(
@@ -108,6 +109,16 @@ class _UserPageState extends State<UserPage> {
     final theme = Theme.of(context);
     final isWide = MediaQuery.of(context).size.width >= 900;
     final isMobile = MediaQuery.of(context).size.width < 900;
+
+    // Redirect to login if not authenticated
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Use addPostFrameCallback to avoid calling Navigator during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      });
+      return const SizedBox.shrink();
+    }
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,

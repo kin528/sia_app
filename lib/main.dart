@@ -12,6 +12,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Force logout on every app start
+  await FirebaseAuth.instance.signOut();
   runApp(const MyApp());
 }
 

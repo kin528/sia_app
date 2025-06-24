@@ -199,7 +199,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     final screenWidth = MediaQuery.of(context).size.width;
     final isWide = screenWidth >= 600;
     final contentMaxWidth = isWide ? 400.0 : double.infinity;
-    final contentPadding = EdgeInsets.all(isWide ? 32.0 : 16.0);
+    final contentPadding = EdgeInsets.all(isWide ? 32.0 : 12.0);
 
     return SafeArea(
       child: GestureDetector(
@@ -210,10 +210,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: contentMaxWidth),
               child: Container(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(isWide ? 32 : 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(isWide ? 24 : 16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.07),
@@ -226,17 +226,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 child: Column(
                   children: [
                     Icon(Icons.login_rounded,
-                        size: 60, color: theme.primaryColor),
-                    const SizedBox(height: 16),
+                        size: isWide ? 60 : 44, color: theme.primaryColor),
+                    SizedBox(height: isWide ? 20 : 12),
                     Text(
                       "Welcome Back!",
                       style: theme.textTheme.headlineSmall!
-                          .copyWith(fontWeight: FontWeight.bold),
+                          .copyWith(fontWeight: FontWeight.bold, fontSize: isWide ? 28 : 20),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       "Log in to continue to your account.",
-                      style: theme.textTheme.bodyMedium,
+                      style: theme.textTheme.bodyMedium?.copyWith(fontSize: isWide ? 18 : 14),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -300,10 +300,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           : ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
                                 padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                textStyle: const TextStyle(fontSize: 18),
+                                    EdgeInsets.symmetric(vertical: isWide ? 18 : 14),
+                                textStyle: TextStyle(fontSize: isWide ? 20 : 16),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(isWide ? 16 : 12),
                                 ),
                               ),
                               icon: const Icon(Icons.check_circle_outline),
@@ -315,7 +315,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Don't have an account? "),
+                        Text("Don't have an account? ", style: TextStyle(fontSize: isWide ? 16 : 13)),
                         TextButton(
                           onPressed: () => Navigator.push(
                             context,

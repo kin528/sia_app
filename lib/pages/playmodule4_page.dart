@@ -110,18 +110,22 @@ class _PlayModule4PageState extends State<PlayModule4Page> {
           .collection('Quiz')
           .doc('module4')
           .collection('scores')
-          .doc(user.uid)
-          .set({
+          .add({
         'score': _score,
         'timestamp': FieldValue.serverTimestamp(),
         'userId': user.uid,
       });
-    } catch (e) {}
+    } catch (e) {
+      print('Error saving score to Firestore: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isAdmin = FirebaseAuth.instance.currentUser?.uid == adminUid;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 600;
+    final maxWidth = isWide ? 500.0 : double.infinity;
     if (_loading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -142,20 +146,22 @@ class _PlayModule4PageState extends State<PlayModule4Page> {
           : null,
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: BoxConstraints(maxWidth: maxWidth),
           child: Card(
             elevation: 12,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(isWide ? 28 : 18),
             ),
-            margin: const EdgeInsets.all(24),
+            margin: EdgeInsets.all(isWide ? 32 : 12),
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: _mode == null
-                  ? _buildModeSelect(context, isAdmin)
-                  : _mode == 0
-                      ? _buildEdit(context)
-                      : _buildPlay(context),
+              padding: EdgeInsets.all(isWide ? 32.0 : 16.0),
+              child: SingleChildScrollView(
+                child: _mode == null
+                    ? _buildModeSelect(context, isAdmin)
+                    : _mode == 0
+                        ? _buildEdit(context)
+                        : _buildPlay(context),
+              ),
             ),
           ),
         ),

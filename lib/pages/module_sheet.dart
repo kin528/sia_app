@@ -18,6 +18,9 @@ class ModuleSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth >= 600;
+    final maxWidth = isWide ? 480.0 : double.infinity;
 
     final child = Container(
       decoration: BoxDecoration(
@@ -34,7 +37,7 @@ class ModuleSheet extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+      padding: EdgeInsets.symmetric(horizontal: isWide ? 32 : 12, vertical: isWide ? 32 : 16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -52,25 +55,24 @@ class ModuleSheet extends StatelessWidget {
           Text(
             "Select a Module",
             style: theme.textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
+                ?.copyWith(fontWeight: FontWeight.bold, fontSize: isWide ? 28 : 20),
           ),
           const SizedBox(height: 24),
-          // You can add more modules by repeating the pattern below
           for (int i = 1; i <= 5; i++)
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  icon: Icon(Icons.book, color: Colors.white),
+                  icon: Icon(Icons.book, color: Colors.white, size: isWide ? 32 : 24),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    textStyle: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w600),
+                    padding: EdgeInsets.symmetric(vertical: isWide ? 28 : 18),
+                    textStyle: TextStyle(
+                        fontSize: isWide ? 22 : 16, fontWeight: FontWeight.w600),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(isWide ? 20 : 16),
                     ),
                   ),
                   onPressed: () {
@@ -118,7 +120,7 @@ class ModuleSheet extends StatelessWidget {
         color: Colors.white,
         borderRadius: const BorderRadius.horizontal(left: Radius.circular(24)),
         child: SizedBox(
-          width: 360,
+          width: isWide ? 360 : 280,
           child: child,
         ),
       );
@@ -126,7 +128,7 @@ class ModuleSheet extends StatelessWidget {
     return Center(
       key: const ValueKey("modules"),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: child,
       ),
     );

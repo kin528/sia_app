@@ -73,10 +73,13 @@ class _SignupPageState extends State<SignupPage> {
         );
 
         // Save user details to Firestore
-        final userDoc =
-            FirebaseFirestore.instance.collection('users').doc(user.uid);
+        final studentDoc = FirebaseFirestore.instance
+            .collection('admin')
+            .doc('students')
+            .collection('users')
+            .doc(user.uid);
 
-        await userDoc.set({
+        await studentDoc.set({
           'firstName': _firstNameController.text.trim(),
           'lastName': _lastNameController.text.trim(),
           'age': _ageController.text.trim(),
