@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
 
 const String adminUid = 'QVyiObd7HoXTyNQaoxBzRSW0HGK2';
 
@@ -20,10 +21,14 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
   int _current = 0;
   int? _selectedChoice;
   bool _showFeedback = false;
-  bool _lastCorrect = false;
+  final bool _lastCorrect = false;
   int _score = 0;
   bool _quizFinished = false;
   List<int> _userAnswers = [];
+
+  // Shuffled choices and answers for each question
+  List<List<String>> _shuffledChoices = [];
+  List<int> _shuffledAnswers = [];
 
   @override
   void initState() {
@@ -43,8 +48,13 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
       _error = null;
     });
     try {
-      final doc = await FirebaseFirestore.instance.collection('Quiz').doc('module3').get();
-      if (doc.exists && doc.data() != null && doc.data()!['questions'] != null) {
+      final doc = await FirebaseFirestore.instance
+          .collection('Quiz')
+          .doc('module3')
+          .get();
+      if (doc.exists &&
+          doc.data() != null &&
+          doc.data()!['questions'] != null) {
         final List<dynamic> qList = doc.data()!['questions'];
         _questions = qList.map((q) {
           final map = Map<String, dynamic>.from(q);
@@ -84,10 +94,12 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
         'questions': _questions,
       });
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Quiz saved!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Quiz saved!')));
     } catch (e) {
       setState(() => _loading = false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to save: $e')));
     }
   }
 
@@ -99,6 +111,22 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
     _score = 0;
     _quizFinished = false;
     _userAnswers = List.filled(_questions.length, -1);
+
+    // Shuffle choices and correct answer for each question
+    final random = Random();
+    _shuffledChoices = [];
+    _shuffledAnswers = [];
+    for (var q in _questions) {
+      final choices = List<String>.from(q['choices']);
+      final correctIndex = q['answer'] as int;
+      final indexed = List.generate(
+          choices.length, (i) => {'text': choices[i], 'index': i});
+      indexed.shuffle(random);
+      final newChoices = indexed.map((c) => c['text'] as String).toList();
+      final newAnswer = indexed.indexWhere((c) => c['index'] == correctIndex);
+      _shuffledChoices.add(newChoices);
+      _shuffledAnswers.add(newAnswer);
+    }
     setState(() {});
   }
 
@@ -178,7 +206,10 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
         const SizedBox(height: 16),
         Text(
           "Module 3 Quiz",
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 32),
         if (isAdmin)
@@ -190,7 +221,8 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                 backgroundColor: Colors.orange.shade400,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 24),
-                textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                textStyle:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -208,7 +240,8 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
               backgroundColor: Colors.green.shade400,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 24),
-              textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              textStyle:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -253,34 +286,41 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Q${i + 1}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text("Q${i + 1}",
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     TextFormField(
                       initialValue: _questions[i]['question'],
                       decoration: const InputDecoration(labelText: 'Question'),
                       onChanged: (val) => _questions[i]['question'] = val,
                     ),
                     const SizedBox(height: 8),
-                    ...List.generate(4, (j) => Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                            children: [
-                              Radio<int>(
-                                value: j,
-                                groupValue: _questions[i]['answer'],
-                                onChanged: (val) {
-                                  setState(() => _questions[i]['answer'] = val);
-                                },
+                    ...List.generate(
+                        4,
+                        (j) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: [
+                                  Radio<int>(
+                                    value: j,
+                                    groupValue: _questions[i]['answer'],
+                                    onChanged: (val) {
+                                      setState(
+                                          () => _questions[i]['answer'] = val);
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: TextFormField(
+                                      initialValue: _questions[i]['choices'][j],
+                                      decoration: InputDecoration(
+                                          labelText:
+                                              'Choice ${String.fromCharCode(65 + j)}'),
+                                      onChanged: (val) =>
+                                          _questions[i]['choices'][j] = val,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Expanded(
-                                child: TextFormField(
-                                  initialValue: _questions[i]['choices'][j],
-                                  decoration: InputDecoration(labelText: 'Choice ${String.fromCharCode(65 + j)}'),
-                                  onChanged: (val) => _questions[i]['choices'][j] = val,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
+                            )),
                   ],
                 ),
               ),
@@ -311,8 +351,8 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
     if (_shuffledIndexes.isEmpty) _startQuiz();
     final idx = _shuffledIndexes[_current];
     final q = _questions[idx]['question'] as String;
-    final choices = _questions[idx]['choices'] as List<String>;
-    final answer = _questions[idx]['answer'] as int;
+    final choices = _shuffledChoices[idx];
+    final answer = _shuffledAnswers[idx];
     final isLast = _current == _questions.length - 1;
     if (_userAnswers[idx] != -1 && _selectedChoice == null) {
       _selectedChoice = _userAnswers[idx];
@@ -355,12 +395,16 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
             const SizedBox(height: 12),
             Text(
               'Question ${_current + 1} of ${_questions.length}',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueGrey),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.blueGrey),
             ),
             const SizedBox(height: 24),
             Card(
               elevation: 6,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
               margin: EdgeInsets.zero,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -369,31 +413,36 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                   children: [
                     Text(
                       q,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 24),
-                    ...List.generate(4, (j) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: RadioListTile<int>(
-                              value: j,
-                              groupValue: _selectedChoice,
-                              title: Text(
-                                choices[j],
-                                style: const TextStyle(fontSize: 18),
+                    ...List.generate(
+                        4,
+                        (j) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: RadioListTile<int>(
+                                  value: j,
+                                  groupValue: _selectedChoice,
+                                  title: Text(
+                                    choices[j],
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  activeColor: Colors.blueAccent,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  tileColor: _selectedChoice == j
+                                      ? Colors.blue.withOpacity(0.08)
+                                      : Colors.transparent,
+                                  onChanged: _showFeedback
+                                      ? null
+                                      : (val) =>
+                                          setState(() => _selectedChoice = val),
+                                ),
                               ),
-                              activeColor: Colors.blueAccent,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              tileColor: _selectedChoice == j
-                                  ? Colors.blue.withOpacity(0.08)
-                                  : Colors.transparent,
-                              onChanged: _showFeedback
-                                  ? null
-                                  : (val) => setState(() => _selectedChoice = val),
-                            ),
-                          ),
-                        )),
+                            )),
                   ],
                 ),
               ),
@@ -409,7 +458,9 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                               setState(() {
                                 _current--;
                                 final prevIdx = _shuffledIndexes[_current];
-                                _selectedChoice = _userAnswers[prevIdx] != -1 ? _userAnswers[prevIdx] : null;
+                                _selectedChoice = _userAnswers[prevIdx] != -1
+                                    ? _userAnswers[prevIdx]
+                                    : null;
                                 _showFeedback = false;
                               });
                             }
@@ -418,9 +469,11 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                         backgroundColor: Colors.grey[300],
                         foregroundColor: Colors.black87,
                         padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: const Text("Previous", style: TextStyle(fontSize: 16)),
+                      child: const Text("Previous",
+                          style: TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -448,9 +501,11 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: Text(isLast ? "Finish" : "Next", style: const TextStyle(fontSize: 16)),
+                      child: Text(isLast ? "Finish" : "Next",
+                          style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                 ],
@@ -464,8 +519,10 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                 backgroundColor: Colors.green.shade400,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                textStyle:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               onPressed: () {
                 _startQuiz();
@@ -503,18 +560,22 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
             const SizedBox(height: 8),
             Text(
               "Your score: $_score/${_questions.length}",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.black87),
             ),
             const SizedBox(height: 16),
             ...List.generate(_questions.length, (i) {
               final q = _questions[i]['question'] as String;
-              final choices = _questions[i]['choices'] as List<String>;
-              final answer = _questions[i]['answer'] as int;
+              final choices = _shuffledChoices[i];
+              final answer = _shuffledAnswers[i];
               final userAns = _userAnswers[i];
               final isCorrect = userAns == answer;
               return Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
                 color: userAns == -1
                     ? Colors.grey[100]
                     : isCorrect
@@ -528,11 +589,12 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                     children: [
                       Text(
                         "Q${i + 1}: $q",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 17),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Your answer: " + (userAns != -1 ? choices[userAns] : "No answer"),
+                        "Your answer: ${userAns != -1 && userAns < choices.length ? choices[userAns] : "No answer"}",
                         style: TextStyle(
                           color: userAns == -1
                               ? Colors.grey
@@ -543,10 +605,13 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
                           fontSize: 16,
                         ),
                       ),
-                      if (!isCorrect && userAns != -1)
+                      if (!isCorrect &&
+                          userAns != -1 &&
+                          answer < choices.length)
                         Text(
                           "Correct answer: ${choices[answer]}",
-                          style: const TextStyle(color: Colors.blueGrey, fontSize: 15),
+                          style: const TextStyle(
+                              color: Colors.blueGrey, fontSize: 15),
                         ),
                     ],
                   ),
@@ -558,4 +623,4 @@ class _PlayModule3PageState extends State<PlayModule3Page> {
       ),
     );
   }
-} 
+}

@@ -64,7 +64,8 @@ class _AdminDashboard extends StatelessWidget {
         if (snapshot.hasError) {
           print('Firestore error in admin dashboard: \\${snapshot.error}');
           return Center(
-            child: Text('Error: \\${snapshot.error}', style: TextStyle(color: Colors.red)),
+            child: Text('Error: \\${snapshot.error}',
+                style: TextStyle(color: Colors.red)),
           );
         }
         if (!snapshot.hasData) {
@@ -91,31 +92,38 @@ class _AdminDashboard extends StatelessWidget {
                 ),
               Row(
                 children: [
-                  Icon(Icons.dashboard_rounded, size: isMobile ? 36 : 56, color: Colors.blue.shade700),
+                  Icon(Icons.dashboard_rounded,
+                      size: isMobile ? 36 : 56, color: Colors.blue.shade700),
                   const SizedBox(width: 16),
                   Text(
                     "Admin Dashboard",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: isMobile ? 22 : 28),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: isMobile ? 22 : 28),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               Text(
                 "Total Students: ${students.length}",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: isMobile ? 16 : 20),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: isMobile ? 16 : 20),
               ),
               const SizedBox(height: 24),
               ...List.generate(students.length, (i) {
                 final student = students[i].data();
                 final userId = students[i].id;
-                final name = "${student['firstName'] ?? ''} ${student['lastName'] ?? ''}".trim();
+                final name =
+                    "${student['firstName'] ?? ''} ${student['lastName'] ?? ''}"
+                        .trim();
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12, top: 4),
+                      padding: const EdgeInsets.only(
+                          left: 8, right: 8, bottom: 12, top: 4),
                       child: Text(
-                        'Student Name: ' + (name.isNotEmpty ? name : userId),
+                        'Student Name: ${name.isNotEmpty ? name : userId}',
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: isMobile ? 20 : 28,
@@ -166,64 +174,97 @@ class _StudentScores extends StatelessWidget {
               if (allScores[i].isNotEmpty)
                 Card(
                   elevation: 6,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isMobile ? 14 : 22)),
-                  margin: EdgeInsets.only(bottom: isMobile ? 18 : 32, left: isMobile ? 0 : 8, right: isMobile ? 0 : 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(isMobile ? 14 : 22)),
+                  margin: EdgeInsets.only(
+                      bottom: isMobile ? 18 : 32,
+                      left: isMobile ? 0 : 8,
+                      right: isMobile ? 0 : 8),
                   color: Colors.white,
                   shadowColor: Colors.black12,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: isMobile ? 14 : 28.0, vertical: isMobile ? 16 : 28.0),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 14 : 28.0,
+                        vertical: isMobile ? 16 : 28.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "${moduleIds[i].replaceAll('module', 'Module ')} Scores:",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: isMobile ? 20 : 30, letterSpacing: 0.5, color: Colors.black87),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: isMobile ? 20 : 30,
+                              letterSpacing: 0.5,
+                              color: Colors.black87),
                         ),
                         SizedBox(height: isMobile ? 12 : 24),
                         ...List.generate(allScores[i].length, (j) {
                           final score = allScores[i][j];
                           final take = j + 1;
-                          final date = score['timestamp'] != null && score['timestamp'] is Timestamp
+                          final date = score['timestamp'] != null &&
+                                  score['timestamp'] is Timestamp
                               ? (score['timestamp'] as Timestamp).toDate()
                               : null;
                           String formattedDate = '';
                           if (date != null) {
-                            final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
-                            final minute = date.minute.toString().padLeft(2, '0');
+                            final hour =
+                                date.hour % 12 == 0 ? 12 : date.hour % 12;
+                            final minute =
+                                date.minute.toString().padLeft(2, '0');
                             final ampm = date.hour >= 12 ? 'PM' : 'AM';
-                            formattedDate = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} $hour:$minute $ampm";
+                            formattedDate =
+                                "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} $hour:$minute $ampm";
                           }
                           return Column(
                             children: [
                               if (j > 0)
                                 Padding(
-                                  padding: EdgeInsets.symmetric(vertical: isMobile ? 4.0 : 8.0),
-                                  child: Divider(height: 2, color: Colors.blueAccent, thickness: 2),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: isMobile ? 4.0 : 8.0),
+                                  child: Divider(
+                                      height: 2,
+                                      color: Colors.blueAccent,
+                                      thickness: 2),
                                 ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: isMobile ? 24 : 36),
+                                  Icon(Icons.check_circle_outline,
+                                      color: Colors.blueAccent,
+                                      size: isMobile ? 24 : 36),
                                   SizedBox(width: isMobile ? 10 : 20),
                                   Text(
                                     "Take $take:",
-                                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: isMobile ? 16 : 26, color: Colors.black87),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: isMobile ? 16 : 26,
+                                        color: Colors.black87),
                                   ),
                                   SizedBox(width: isMobile ? 10 : 18),
                                   Text(
                                     "${score['score']} pts",
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: isMobile ? 18 : 28, color: Colors.blueAccent),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: isMobile ? 18 : 28,
+                                        color: Colors.blueAccent),
                                   ),
                                   const Spacer(),
                                   if (formattedDate.isNotEmpty)
                                     Text(
                                       formattedDate,
-                                      style: TextStyle(fontSize: isMobile ? 14 : 20, color: Colors.grey.shade700, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),
+                                      style: TextStyle(
+                                          fontSize: isMobile ? 14 : 20,
+                                          color: Colors.grey.shade700,
+                                          fontStyle: FontStyle.italic,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                 ],
                               ),
                               if (j == allScores[i].length - 1)
-                                SizedBox(height: isMobile ? 8 : 18), // Extra gap after last take
+                                SizedBox(
+                                    height: isMobile
+                                        ? 8
+                                        : 18), // Extra gap after last take
                             ],
                           );
                         }),
@@ -262,11 +303,15 @@ class _StudentDashboard extends StatelessWidget {
           ),
         Row(
           children: [
-            Icon(Icons.dashboard_rounded, size: 56, color: Colors.green.shade700),
+            Icon(Icons.dashboard_rounded,
+                size: 56, color: Colors.green.shade700),
             const SizedBox(width: 16),
             Text(
               "My Dashboard",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -321,12 +366,16 @@ class _MyModuleScores extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 32),
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 32),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         'Error: \\${snapshot.error}',
-                        style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18),
+                        style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -346,24 +395,31 @@ class _MyModuleScores extends StatelessWidget {
         if (scores.isEmpty) return const SizedBox.shrink();
         return Card(
           elevation: 6,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
           margin: const EdgeInsets.only(bottom: 32, left: 8, right: 8),
           color: Colors.white,
           shadowColor: Colors.black12,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 28.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 28.0, vertical: 28.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "${moduleId.replaceAll('module', 'Module ')} Scores:",
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30, letterSpacing: 0.5, color: Colors.black87),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      letterSpacing: 0.5,
+                      color: Colors.black87),
                 ),
                 const SizedBox(height: 24),
                 ...List.generate(scores.length, (i) {
                   final score = scores[i].data();
                   final take = i + 1;
-                  final date = score['timestamp'] != null && score['timestamp'] is Timestamp
+                  final date = score['timestamp'] != null &&
+                          score['timestamp'] is Timestamp
                       ? (score['timestamp'] as Timestamp).toDate()
                       : null;
                   String formattedDate = '';
@@ -371,34 +427,49 @@ class _MyModuleScores extends StatelessWidget {
                     final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
                     final minute = date.minute.toString().padLeft(2, '0');
                     final ampm = date.hour >= 12 ? 'PM' : 'AM';
-                    formattedDate = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} $hour:$minute $ampm";
+                    formattedDate =
+                        "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} $hour:$minute $ampm";
                   }
                   return Column(
                     children: [
                       if (i > 0)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Divider(height: 2, color: Colors.blueAccent, thickness: 2),
+                          child: Divider(
+                              height: 2,
+                              color: Colors.blueAccent,
+                              thickness: 2),
                         ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 36),
+                          const Icon(Icons.check_circle_outline,
+                              color: Colors.blueAccent, size: 36),
                           const SizedBox(width: 20),
                           Text(
                             "Take $take:",
-                            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 26, color: Colors.black87),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 26,
+                                color: Colors.black87),
                           ),
                           const SizedBox(width: 18),
                           Text(
                             "${score['score']} pts",
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: Colors.blueAccent),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 28,
+                                color: Colors.blueAccent),
                           ),
                           const Spacer(),
                           if (formattedDate.isNotEmpty)
                             Text(
                               formattedDate,
-                              style: TextStyle(fontSize: 20, color: Colors.grey.shade700, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.grey.shade700,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w600),
                             ),
                         ],
                       ),
