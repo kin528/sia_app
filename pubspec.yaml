@@ -16,6 +16,11 @@ dependencies:
   url_launcher: ^6.2.6
   file_picker: ^8.0.0
   dio: ^5.4.3
+  flutter_quill: ^11.4.1
+  super_editor: ^0.3.0-dev.25
+  crop_your_image: ^2.0.0
+  flutter_box_transform: ^0.4.7
+  flutter_resizable_container: ^4.2.0
 
 dev_dependencies:
   flutter_test:
