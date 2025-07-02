@@ -6,8 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'simple_document_editor.dart';
-import 'document_editor_page.dart';
-import 'canvas_document_editor.dart';
 // Only import dart:html on web
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
@@ -200,28 +198,34 @@ class _Module2PageState extends State<Module2Page> {
                       Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.black87),
                             tooltip: 'Back',
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ],
                       ),
                       Icon(Icons.cloud_upload_rounded,
-                          size: isWide ? 64 : 44, color: Theme.of(context).primaryColor),
+                          size: isWide ? 64 : 44,
+                          color: Theme.of(context).primaryColor),
                       SizedBox(height: isWide ? 20 : 12),
                       Text(
                         "Module 2 - Document Upload",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                              fontSize: isWide ? 28 : 20,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                  fontSize: isWide ? 28 : 20,
+                                ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         "Upload your .doc or .docx file to Cloudinary and view all your uploads below.",
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: isWide ? 18 : 14),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontSize: isWide ? 18 : 14),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
@@ -257,76 +261,23 @@ class _Module2PageState extends State<Module2Page> {
                               icon: const Icon(Icons.upload_file, size: 28),
                               label: const Text(
                                 "Select and Upload Document",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w600),
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(context).primaryColor,
                                 foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: isWide ? 22 : 16,
+                                    horizontal: isWide ? 32 : 24),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(isWide ? 20 : 14),
+                                  borderRadius:
+                                      BorderRadius.circular(isWide ? 20 : 14),
                                 ),
                                 elevation: 6,
                               ),
-                              onPressed: _uploading ? null : _pickAndUploadDocument,
-                            ),
-                            ElevatedButton.icon(
-                              icon: const Icon(Icons.add, size: 28),
-                              label: const Text(
-                                "Create New",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(isWide ? 20 : 14),
-                                ),
-                                elevation: 6,
-                              ),
-                              onPressed: _uploading ? null : () async {
-                                final result = await showDialog<String>(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Choose Editor'),
-                                    content: const Text('Which editor do you want to use for the new document?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, 'word'),
-                                        child: const Text('Word-like Editor'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, 'canvas'),
-                                        child: const Text('Canvas Editor'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                if (result == 'word') {
-                                  final res = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => DocumentEditorPage(moduleNumber: 2),
-                                    ),
-                                  );
-                                  if (res == true) {
-                                    setState(() {
-                                      _uploadStatus = "New document created and saved successfully!";
-                                    });
-                                  }
-                                } else if (result == 'canvas') {
-                                  final res = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => CanvasDocumentEditor(moduleNumber: 2),
-                                    ),
-                                  );
-                                  if (res == true) {
-                                    setState(() {
-                                      _uploadStatus = "New canvas document created and saved successfully!";
-                                    });
-                                  }
-                                }
-                              },
+                              onPressed:
+                                  _uploading ? null : _pickAndUploadDocument,
                             ),
                           ],
                         ),
@@ -335,7 +286,9 @@ class _Module2PageState extends State<Module2Page> {
                         SelectableText(
                           "Document URL:\n$_docUrl",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: isWide ? 16 : 12, color: Colors.blueAccent),
+                          style: TextStyle(
+                              fontSize: isWide ? 16 : 12,
+                              color: Colors.blueAccent),
                         ),
                       ],
                       if (_uploading)
@@ -347,50 +300,68 @@ class _Module2PageState extends State<Module2Page> {
                       const Divider(),
                       Row(
                         children: [
-                          Icon(Icons.folder_open_rounded, color: Theme.of(context).primaryColor),
+                          Icon(Icons.folder_open_rounded,
+                              color: Theme.of(context).primaryColor),
                           const SizedBox(width: 8),
                           Text(
                             "All Uploaded Documents",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: isWide ? 20 : 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: isWide ? 20 : 16),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
                         height: isWide ? 320 : 220,
-                        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        child:
+                            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                           stream: uploadsStream,
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: CircularProgressIndicator());
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
                               return Text('Error: \\${snapshot.error}');
                             }
                             final docs = snapshot.data?.docs ?? [];
                             if (docs.isEmpty) {
-                              return const Center(child: Text("No uploads yet."));
+                              return const Center(
+                                  child: Text("No uploads yet."));
                             }
                             return ListView.separated(
                               itemCount: docs.length,
-                              separatorBuilder: (context, i) => const SizedBox(height: 10),
+                              separatorBuilder: (context, i) =>
+                                  const SizedBox(height: 10),
                               itemBuilder: (context, i) {
                                 final data = docs[i].data();
                                 final docId = docs[i].id;
                                 return Card(
                                   elevation: 3,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(isWide ? 18 : 10),
+                                    borderRadius:
+                                        BorderRadius.circular(isWide ? 18 : 10),
                                   ),
                                   child: ListTile(
-                                    leading: const Icon(Icons.description, color: Colors.blueAccent),
-                                    title: Text(data['fileName'] ?? 'Document', style: TextStyle(fontWeight: FontWeight.w600, fontSize: isWide ? 18 : 14)),
-                                    subtitle: Text(data['docUrl'] ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: isWide ? 14 : 11)),
+                                    leading: const Icon(Icons.description,
+                                        color: Colors.blueAccent),
+                                    title: Text(data['fileName'] ?? 'Document',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: isWide ? 18 : 14)),
+                                    subtitle: Text(data['docUrl'] ?? '',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: isWide ? 14 : 11)),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          icon: const Icon(Icons.open_in_new, color: Colors.green),
+                                          icon: const Icon(Icons.open_in_new,
+                                              color: Colors.green),
                                           tooltip: "Open Document",
                                           onPressed: () async {
                                             final url = data['docUrl'];
@@ -401,22 +372,36 @@ class _Module2PageState extends State<Module2Page> {
                                         ),
                                         if (isAdmin)
                                           IconButton(
-                                            icon: const Icon(Icons.delete, color: Colors.red),
+                                            icon: const Icon(Icons.delete,
+                                                color: Colors.red),
                                             tooltip: "Delete Document",
                                             onPressed: () async {
-                                              final confirm = await showDialog<bool>(
+                                              final confirm =
+                                                  await showDialog<bool>(
                                                 context: context,
-                                                builder: (context) => AlertDialog(
-                                                  title: const Text("Delete Document"),
-                                                  content: const Text("Are you sure you want to delete this document?"),
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                  title: const Text(
+                                                      "Delete Document"),
+                                                  content: const Text(
+                                                      "Are you sure you want to delete this document?"),
                                                   actions: [
                                                     TextButton(
-                                                      onPressed: () => Navigator.pop(context, false),
-                                                      child: const Text("Cancel"),
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context, false),
+                                                      child:
+                                                          const Text("Cancel"),
                                                     ),
                                                     TextButton(
-                                                      onPressed: () => Navigator.pop(context, true),
-                                                      child: const Text("Delete", style: TextStyle(color: Colors.red)),
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context, true),
+                                                      child: const Text(
+                                                          "Delete",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red)),
                                                     ),
                                                   ],
                                                 ),
@@ -445,4 +430,4 @@ class _Module2PageState extends State<Module2Page> {
       ),
     );
   }
-} 
+}

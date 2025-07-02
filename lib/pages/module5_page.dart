@@ -6,8 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'simple_document_editor.dart';
-import 'document_editor_page.dart';
-import 'canvas_document_editor.dart';
 // Only import dart:html on web
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
@@ -269,64 +267,6 @@ class _Module5PageState extends State<Module5Page> {
                                 elevation: 6,
                               ),
                               onPressed: _uploading ? null : _pickAndUploadDocument,
-                            ),
-                            ElevatedButton.icon(
-                              icon: const Icon(Icons.add, size: 28),
-                              label: const Text(
-                                "Create New",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(isWide ? 20 : 14),
-                                ),
-                                elevation: 6,
-                              ),
-                              onPressed: _uploading ? null : () async {
-                                final result = await showDialog<String>(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Choose Editor'),
-                                    content: const Text('Which editor do you want to use for the new document?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, 'word'),
-                                        child: const Text('Word-like Editor'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context, 'canvas'),
-                                        child: const Text('Canvas Editor'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                if (result == 'word') {
-                                  final res = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => DocumentEditorPage(moduleNumber: 5),
-                                    ),
-                                  );
-                                  if (res == true) {
-                                    setState(() {
-                                      _uploadStatus = "New document created and saved successfully!";
-                                    });
-                                  }
-                                } else if (result == 'canvas') {
-                                  final res = await Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => CanvasDocumentEditor(moduleNumber: 5),
-                                    ),
-                                  );
-                                  if (res == true) {
-                                    setState(() {
-                                      _uploadStatus = "New canvas document created and saved successfully!";
-                                    });
-                                  }
-                                }
-                              },
                             ),
                           ],
                         ),
