@@ -251,22 +251,72 @@ class _Module5PageState extends State<Module5Page> {
                           runSpacing: 16,
                           alignment: WrapAlignment.center,
                           children: [
-                            ElevatedButton.icon(
-                              icon: const Icon(Icons.upload_file, size: 28),
-                              label: const Text(
-                                "Select and Upload Document",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).primaryColor,
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(isWide ? 20 : 14),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.upload_file, size: 28),
+                                label: const Text(
+                                  "Select and Upload Document",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                                 ),
-                                elevation: 6,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context).primaryColor,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(isWide ? 20 : 14),
+                                  ),
+                                  elevation: 6,
+                                ),
+                                onPressed: _uploading ? null : _pickAndUploadDocument,
                               ),
-                              onPressed: _uploading ? null : _pickAndUploadDocument,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.note_add, size: 28),
+                                label: const Text(
+                                  "Create Document",
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: isWide ? 22 : 16, horizontal: isWide ? 32 : 24),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(isWide ? 20 : 14),
+                                  ),
+                                  elevation: 6,
+                                ),
+                                onPressed: () async {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("How to Create a DOCX Document"),
+                                      content: const Text(
+                                        "To create a .docx document, you must use an existing Microsoft account, or create and edit a .docx file using Microsoft Word, LibreOffice, or another editor on your computer. Then upload it here.\n\nIf you already have a Microsoft account, you can use Office Online Word to create your document.",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            if (kIsWeb) {
+                                              html.window.open('https://www.office.com/launch/word', '_blank');
+                                            } else {
+                                              final uri = Uri.parse('https://www.office.com/launch/word');
+                                              launchUrl(uri, mode: LaunchMode.externalApplication);
+                                            }
+                                          },
+                                          child: const Text("Open Office Online Word"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text("Close"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
